@@ -1,22 +1,45 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-	<link rel="stylesheet" href="styles.css">
-</head>
+  <title>Tic Tac Toe</title>
+  <style>
+    .container {
+      text-align: center;
+    }
 
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      margin-top: 20px;
+    }
+
+    .cell {
+      border: 1px solid #ccc;
+      padding: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
-	  <div class="container">
+  <div class="container">
     <div id="input-section">
-      <input type="text" id="player-1" placeholder="Player 1 name">
-      <input type="text" id="player-2" placeholder="Player 2 name">
+      <h1>Tic Tac Toe</h1>
+      <input type="text" id="player-1" placeholder="Player 1 Name">
+      <input type="text" id="player-2" placeholder="Player 2 Name">
       <button id="submit">Submit</button>
     </div>
+
     <div id="game-section" style="display: none;">
       <h1>Tic Tac Toe</h1>
       <div class="message"></div>
-      <div id="board">
+      <div class="board">
         <div class="cell" id="1"></div>
         <div class="cell" id="2"></div>
         <div class="cell" id="3"></div>
@@ -29,10 +52,61 @@
       </div>
     </div>
   </div>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
 
+  <script>
+    document.getElementById("submit").addEventListener("click", function() {
+      const player1 = document.getElementById("player-1").value;
+      const player2 = document.getElementById("player-2").value;
+
+      if (player1.trim() === "" || player2.trim() === "") {
+        alert("Please enter names for both players");
+        return;
+      }
+
+      document.getElementById("input-section").style.display = "none";
+      document.getElementById("game-section").style.display = "block";
+      document.querySelector(".message").textContent = `${player1}, you're up!`;
+    });
+
+    const cells = document.getElementsByClassName("cell");
+    let currentPlayer = "player-1";
+
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].addEventListener("click", function() {
+        if (cells[i].textContent === "") {
+          cells[i].textContent = currentPlayer === "player-1" ? "X" : "O";
+          checkWin(currentPlayer);
+          currentPlayer = currentPlayer === "player-1" ? "player-2" : "player-1";
+          const nextPlayer = currentPlayer === "player-1" ? document.getElementById("player-1").value : document.getElementById("player-2").value;
+          document.querySelector(".message").textContent = `${nextPlayer}, you're up!`;
+        }
+      });
+    }
+
+    function checkWin(player) {
+      const winningCombinations = [
+        [1, 2, 3], [4, 5, 6], [7, 8, 9], // Rows
+        [1, 4, 7], [2, 5, 8], [3, 6, 9], // Columns
+        [1, 5, 9], [3, 5, 7]              // Diagonals
+      ];
+
+      for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (cells[a-1].textContent === cells[b-1].textContent && cells[b-1].textContent === cells[c-1].textContent && cells[a-1].textContent !== "") {
+          const playerName = player === "player-1" ? document.getElementById("player-1").value : document.getElementById("player-2").value;
+          document.querySelector(".message").textContent = `${playerName}, congratulations! You won!`;
+          disableCells();
+          return;
+        }
+      }
+    }
+
+    function disableCells() {
+      for (let i = 0; i < cells.length; i++) {
+        cells[i].removeEventListener("click", null);
+      }
+    }
+  </script>
 </body>
-
 </html>
+
